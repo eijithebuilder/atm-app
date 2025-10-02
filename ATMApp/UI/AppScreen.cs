@@ -15,6 +15,7 @@ namespace ATMApp.UI
                 Thread.Sleep(50);
                 Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
             }
+            Thread.Sleep(200);
         }
 
         public void Welcome()
@@ -42,10 +43,6 @@ namespace ATMApp.UI
 
         public void ShowMainMenu(Account account)
         {
-            Console.WriteLine("Loading servies...");
-            ShowLoading(5);
-            Thread.Sleep(500);
-
             Console.Clear();
             Console.WriteLine($"Greetings! {account.FullName}\n");
             Console.WriteLine($"Account number: {account.AccountNumber}");
@@ -61,142 +58,17 @@ namespace ATMApp.UI
         public void ShowSettingsMenu(Account account)
         {
             Console.Clear();
-            while (true)
-            {
-                Console.WriteLine("=== Settings ===");
-                Console.WriteLine("1. Change full name");
-                Console.WriteLine("2. Change PIN");
-                Console.WriteLine("3. Back");
-
-                var choice = ReadMenuChoice(3);
-
-                switch (choice)
-                {
-                    case 1: HandleChangeFullname(account); break;
-                    case 2: HandleChangePin(account); break;
-                    case 3: ShowMainMenu(account); return;
-                }
-            }
+            Console.WriteLine("=== Settings ===");
+            Console.WriteLine("1. Change full name");
+            Console.WriteLine("2. Change PIN");
+            Console.WriteLine("3. Back");
         }
 
-        public int ReadMenuChoice(int option)
+        public void ShowMessage(string message, ConsoleColor color = ConsoleColor.White)
         {
-            while (true)
-            {
-                Console.WriteLine("\nSelect option:");
-                Console.Write("> ");
-
-                string? input = Console.ReadLine() ?? "";
-
-                if (int.TryParse(input, out int choice) && choice >= 1 && choice <= option)
-                {
-                    return choice;
-                }
-
-                Console.WriteLine("\nInvalid choice. Please try again.");
-            }
-        }
-
-        public void HandleChangeFullname(Account account)
-        {
-            Console.WriteLine("\nEnter new full name:");
-            Console.Write("> ");
-            string? newFullname = Console.ReadLine()?.Trim();
-
-            if (!account.SetFullName(newFullname!, out string message))
-            {
-                Console.WriteLine(message);
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine(message);
-                Console.ResetColor();
-            }
-
-            ShowLoading(5);
-            Thread.Sleep(500);
-        }
-
-        public void HandleChangePin(Account account)
-        {
-            Console.WriteLine("\nEnter new PIN (6 digits):");
-            Console.Write("> ");
-            string newPin = ValidatorService.ReadPin();
-
-            if (!account.SetPin(newPin, out string message))
-            {
-                Console.WriteLine(message);
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine(message);
-                Console.ResetColor();
-            }
-                
-            
-            ShowLoading(5);
-            Thread.Sleep(500);
-        }
-
-        public void HandleDeposit(Account account)
-        {
-            Console.WriteLine("Enter amount to deposit: ");
-            Console.Write("> ");
-
-            if (decimal.TryParse(Console.ReadLine() ?? "", out decimal amount) && Validator.IsValidAmount(amount))
-            {
-                if (account.Deposit(amount))
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("\nDeposit successful.");
-                    Console.ResetColor();
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\nDeposit failed.");
-                    Console.ResetColor();
-                }
-            }
-            else
-            {
-                Console.WriteLine("\nInvalid amount.");
-            }
-        }
-
-        public void HandleWithdraw(Account account)
-        {
-            Console.WriteLine("Enter amount to withdraw: ");
-            Console.Write("> ");
-
-            if (decimal.TryParse(Console.ReadLine() ?? "", out decimal amount) && Validator.IsValidAmount(amount))
-            {
-                if (account.Withdraw(amount))
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("\nWithdrawal successful.");
-                    Console.ResetColor();
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\nInsufficient balance or invalid amount.");
-                    Console.ResetColor();
-                } 
-            }
-            else
-            {
-                Console.WriteLine("\nInvalid input.");
-            }
-        }
-
-        public void HandleExit()
-        {
-            Console.WriteLine("\nExiting...");
-            ShowLoading(5);
-            Console.WriteLine("Happy to service ^_^");
+            Console.ForegroundColor = color;
+            Console.WriteLine($"\n{message}\n");
+            Console.ResetColor();
         }
     }
 }
