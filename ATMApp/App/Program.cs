@@ -8,7 +8,7 @@ namespace ATMApp.App
     {
         static void Main(string[] args)
         {
-            var accounts = MockData.LoadAccountsFromJson("F:\\accounts.json");
+            var accounts = MockData.LoadAccountsFromJson("MockData/accounts.json");
             //IAccountService accountService = new AccountService();
             var loginService = new UserLoginService(accounts);
 

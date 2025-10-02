@@ -22,102 +22,10 @@ namespace ATMApp.Domain.Entities
         public int FailedLoginAttempts { get; private set; } = 0;
         public AccountStatus Status { get; private set; } = AccountStatus.Active;
 
-        public bool CanLogin()
-        {
-            return Status == AccountStatus.Active;
-        }
-
-        public bool IsLocked()
-        {
-            return Status == AccountStatus.Locked;
-        }
-
-        public Account(int id, string cardNumber, string cardPin, string accountNumber, string fullName)
-        {
-            if (!Validator.IsValidCardNumber(cardNumber))
-            {
-                throw new ArgumentException("Card number must be 10 digits.", nameof(cardNumber));
-            }
-
-            if (!Validator.IsValidAccountNumber(accountNumber))
-            {
-                throw new ArgumentException("Account number must be 8 digits.", nameof(accountNumber));
-            }
-
-            if (!Validator.IsValidFullName(fullName))
-            {
-                throw new ArgumentException("Invalid full name.", nameof(accountNumber));
-            }
-
-            if (!Validator.IsValidPin(cardPin))
-            {
-                throw new ArgumentException("Invalid card pin", nameof(cardPin));
-            }
-
-            Id = id;
-            CardNumber = cardNumber;
-            CardPin = cardPin;
-            AccountNumber = accountNumber;
-            FullName = fullName;
-        }
-
-        public Account(int id, string cardNumber, string cardPin, string accountNumber, string fullName, decimal balance)
-        {
-            if (!Validator.IsValidCardNumber(cardNumber))
-            {
-                throw new ArgumentException("Card number must be 10 digits.", nameof(cardNumber));
-            }
-
-            if (!Validator.IsValidAccountNumber(accountNumber))
-            {
-                throw new ArgumentException("Account number must be 8 digits.", nameof(accountNumber));
-            }
-
-            if (!Validator.IsValidFullName(fullName))
-            {
-                throw new ArgumentException("Invalid full name.", nameof(accountNumber));
-            }
-
-            if (!Validator.IsValidPin(cardPin))
-            {
-                throw new ArgumentException("Invalid card pin", nameof(cardPin));
-            }
-
-            Id = id;
-            CardNumber = cardNumber;
-            CardPin = cardPin;
-            AccountNumber = accountNumber;
-            FullName = fullName;
-            AccountBalance = balance;
-        }
-
         [JsonConstructor]
-        public Account (int id, string cardNumber, string cardPin, string accountNumber, string fullName, decimal accountBalance, int failedLoginAttempts, AccountStatus status)
+        public Account(int id, string cardNumber, string cardPin, string accountNumber, string fullName, decimal accountBalance, int failedLoginAttempts, AccountStatus status)
         {
-            if (!Validator.IsValidCardNumber(cardNumber))
-            {
-                throw new ArgumentException("Card number must be 10 digits.", nameof(cardNumber));
-            }
-
-            if (!Validator.IsValidAccountNumber(accountNumber))
-            {
-                throw new ArgumentException("Account number must be 8 digits.", nameof(accountNumber));
-            }
-
-            if (!Validator.IsValidFullName(fullName))
-            {
-                throw new ArgumentException("Invalid full name.", nameof(accountNumber));
-            }
-
-            if (!Validator.IsValidPin(cardPin))
-            {
-                throw new ArgumentException("Invalid card pin", nameof(cardPin));
-            }
-
-            if (accountBalance < 0)
-            {
-                throw new ArgumentException("Balance cannot be negative.", nameof(accountBalance));
-            }
+            ValidateAccount(cardNumber, cardPin, accountNumber, fullName, accountBalance);
 
             Id = id;
             CardNumber = cardNumber;
@@ -128,6 +36,32 @@ namespace ATMApp.Domain.Entities
             FailedLoginAttempts = failedLoginAttempts;
             Status = status;
         }
+
+        public Account(int id, string cardNumber, string cardPin, string accountNumber, string fullName) : this(id, cardNumber, cardPin, accountNumber, fullName, 0, 0, AccountStatus.Active) { }
+
+        public Account(int id, string cardNumber, string cardPin, string accountNumber, string fullName, decimal accountBalance) : this(id, cardNumber, cardPin, accountNumber, fullName, accountBalance, 0, AccountStatus.Active) { }
+
+        private static void ValidateAccount(string cardNumber, string cardPin, string accountNumber, string fullName, decimal balance = 0)
+        {
+            if (!Validator.IsValidCardNumber(cardNumber))
+                throw new ArgumentException("Card number must be 10 digits.", nameof(cardNumber));
+
+            if (!Validator.IsValidAccountNumber(accountNumber))
+                throw new ArgumentException("Account number must be 8 digits.", nameof(accountNumber));
+
+            if (!Validator.IsValidFullName(fullName))
+                throw new ArgumentException("Invalid full name.", nameof(accountNumber));
+
+            if (!Validator.IsValidPin(cardPin))
+                throw new ArgumentException("Invalid card pin", nameof(cardPin));
+
+            if (balance < 0)
+                throw new ArgumentException("Balance cannot be negative.", nameof(balance));
+        }
+
+        public bool CanLogin() => Status == AccountStatus.Active;
+
+        public bool IsLocked() =>  Status == AccountStatus.Locked;
 
         public bool SetFullName(string newFullname, out string message)
         {
@@ -201,15 +135,9 @@ namespace ATMApp.Domain.Entities
             }
         }
 
-        public void ResetFailedLogin()
-        {
-            FailedLoginAttempts = 0;
-        }
+        public void ResetFailedLogin() => FailedLoginAttempts = 0;
 
-        public void LockAccount()
-        {
-            Status = AccountStatus.Locked;
-        }
+        public void LockAccount() => Status = AccountStatus.Locked;
 
         public void UnlockAccount()
         {

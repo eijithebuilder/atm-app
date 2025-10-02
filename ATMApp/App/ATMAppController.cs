@@ -29,7 +29,7 @@ namespace ATMApp.App
             Console.WriteLine("          ATM Login Portal         ");
             Console.WriteLine("=====================================\n");
             // load mock data
-            var loginService = new UserLoginService(MockData.LoadAccountsFromJson("F:\\accounts.json"));
+            var loginService = new UserLoginService(MockData.LoadAccountsFromJson("MockData/accounts.json"));
             Account? account = null;
             // handle login
             while (account == null)
