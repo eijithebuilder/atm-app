@@ -1,0 +1,52 @@
+[
+  {
+    "Id": 1,
+    "CardNumber": "3636363636",
+    "CardPin": "$2a$11$CHp7CGAIg8CvvmHY2GWQdecJR2nG1ayqBasUnVYnj41r/uxoNek8G", 
+    "AccountNumber": "10001234",
+    "FullName": "Ethan Carter",
+    "AccountBalance": 250000.00,
+    "Status": "Active",
+    "FailedLoginAttempts": 0
+  },
+  {
+    "Id": 2,
+    "CardNumber": "9696969696",
+    "CardPin": "$2a$11$4eVle9l2b2sieahcbQWfaOOK0v9OAl/maHdCc7c05CgGKG6ceJLEO",
+    "AccountNumber": "10005678",
+    "FullName": "Sophia Bennett",
+    "AccountBalance": 5000000.00,
+    "Status": "Locked",
+    "FailedLoginAttempts": 0
+  },
+  {
+    "Id": 3,
+    "CardNumber": "8686868686",
+    "CardPin": "$2a$11$eNN3pLdk.H6PKyilzk8MwuCcEqSHTz3Pv2uklcPJw7wdmRQALdy0K",
+    "AccountNumber": "10009876",
+    "FullName": "Liam Anderson",
+    "AccountBalance": 1500.00,
+    "Status": "Active",
+    "FailedLoginAttempts": 0
+  },
+   {
+    "Id": 4,
+    "CardNumber": "7878787878",
+    "CardPin": "$2a$11$tGPKfv3CzKqF.CUMc6Qx7e7q8aCRmSPr8DScE6JeHPmdC3y6RGJbq",
+    "AccountNumber": "10004321",
+    "FullName": "Olivia Morgan",
+    "AccountBalance": 0.00,
+    "Status": "Active",
+    "FailedLoginAttempts": 0
+  },
+    {
+    "Id": 5,
+    "CardNumber": "4848484848",
+    "CardPin": "$2a$11$a0GMIOukdMZWPDcpRDoagOJ8NQwHkhniDq92M5C5btIMDT4APQGcq",
+    "AccountNumber": "10006543",
+    "FullName": "James Walker",
+    "AccountBalance": 999999.99,
+    "Status": "Active",
+    "FailedLoginAttempts": 0
+  }
+]
