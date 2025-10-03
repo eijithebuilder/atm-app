@@ -1,7 +1,6 @@
 ﻿using ATMApp.Domain.Entities;
 using ATMApp.Domain.Services;
 using ATMApp.Domain.Utilities;
-using Xunit;
 
 namespace ATMApp.Tests
 {

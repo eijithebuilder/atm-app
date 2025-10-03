@@ -1,11 +1,5 @@
 ﻿using ATMApp.Domain.Entities;
 using ATMApp.Domain.Services;
-using Microsoft.VisualBasic.FileIO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ATMApp.UI
 {

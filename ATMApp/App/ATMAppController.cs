@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ATMApp.Domain.Entities;
+﻿using ATMApp.Domain.Entities;
 using ATMApp.Domain.Services;
 using ATMApp.UI;
 
@@ -30,13 +25,12 @@ namespace ATMApp.App
             Console.WriteLine("=====================================");
             Console.WriteLine("          ATM Login Portal         ");
             Console.WriteLine("=====================================\n");
-            // load mock data
+
             var loginService = new UserLoginService(MockData.LoadAccountsFromJson("MockData/accounts.json"));
             Account? account = AuthenticateUser(screen, loginService);
 
             if (account == null) return;
 
-            // handle login
             while (true)
             {
                 screen.ShowMainMenu(account);

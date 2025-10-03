@@ -1,6 +1,4 @@
 ﻿using ATMApp.Domain.Entities;
-using ATMApp.Domain.Services;
-using System;
 
 namespace ATMApp.UI
 {
