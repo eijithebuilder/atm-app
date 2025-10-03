@@ -18,43 +18,45 @@ namespace ATMApp.UI
             _screen = screen;
         }
 
-        public int ReadMenuChoice(int option)
+        public int ReadMenuChoice(int option, Action showMenu)
         {
             while (true)
             {
                 Console.WriteLine("\nSelect option:");
                 Console.Write("> ");
-
-                string? input = Console.ReadLine() ?? "";
+                string input = Console.ReadLine()?.Trim() ?? "";
 
                 if (int.TryParse(input, out int choice) && choice >= 1 && choice <= option)
                     return choice;
 
                 _screen.ShowMessage("Invalid choice. Try again.", ConsoleColor.Red);
+                Console.WriteLine("Press [Enter] to continue...");
+                Console.ReadLine();
+                showMenu();
             }
         }
 
-        public string HandleChangeFullname(Account account)
+        public (bool success, string message) HandleChangeFullname(Account account)
         {
             Console.WriteLine("\nEnter new full name:");
             Console.Write("> ");
-            string? newFullname = Console.ReadLine()?.Trim();
+            string? newFullname = Console.ReadLine()?.Trim() ?? "";
 
-            account.SetFullName(newFullname!, out string message);
-            return message;
+            bool success = account.SetFullName(newFullname, out string message);
+            return (success, message);
         }
 
-        public string HandleChangePin(Account account)
+        public (bool success, string message) HandleChangePin(Account account)
         {
             Console.WriteLine("\nEnter new PIN (6 digits):");
             Console.Write("> ");
             string newPin = ValidatorService.ReadPin();
 
             bool success = account.SetPin(newPin, out string message);
-            return message;
+            return (success, message);
         }
 
-        public string HandleDeposit(Account account)
+        public (bool success, string message) HandleDeposit(Account account)
         {
             Console.WriteLine("Enter amount to deposit: ");
             Console.Write("> ");
@@ -62,13 +64,13 @@ namespace ATMApp.UI
             if (decimal.TryParse(Console.ReadLine() ?? "", out decimal amount) && Validator.IsValidAmount(amount))
             {
                 if (account.Deposit(amount))
-                    return "Deposit successful.";
-                return "Deposit failed.";
+                    return (true, "Deposit successful.");
+                return (false, "Deposit failed.");
             }
-            return "Invalid amount.";
+            return (false, "Invalid amount.");
         }
 
-        public string HandleWithdraw(Account account)
+        public (bool success, string message) HandleWithdraw(Account account)
         {
             Console.WriteLine("Enter amount to withdraw: ");
             Console.Write("> ");
@@ -76,10 +78,10 @@ namespace ATMApp.UI
             if (decimal.TryParse(Console.ReadLine() ?? "", out decimal amount) && Validator.IsValidAmount(amount))
             {
                 if (account.Withdraw(amount))
-                    return "Withdrawal successful.";
-                return "Insufficient balance or invalid amount.";
+                    return (true, "Withdrawal successful.");
+                return (false, "Insufficient balance.");
             }
-            return "Invalid input.";
+            return (false, "Invalid amount.");
         }
 
         public string HandleExit()

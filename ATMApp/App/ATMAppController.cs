@@ -32,14 +32,50 @@ namespace ATMApp.App
             Console.WriteLine("=====================================\n");
             // load mock data
             var loginService = new UserLoginService(MockData.LoadAccountsFromJson("MockData/accounts.json"));
-            Account? account = null;
+            Account? account = AuthenticateUser(screen, loginService);
+
+            if (account == null) return;
+
             // handle login
-            while (account == null)
+            while (true)
+            {
+                screen.ShowMainMenu(account);
+                int choice = handler.ReadMenuChoice(4, () => screen.ShowMainMenu(account));
+
+                switch (choice)
+                {
+                    case 1:
+                        HandleSettingsMenu(handler, screen, account);
+                        break;
+
+                    case 2:
+                        var (depositSuccess, depositMsg) = handler.HandleDeposit(account);
+                        screen.ShowMessage(depositMsg, depositSuccess ? ConsoleColor.Green : ConsoleColor.Red);
+                        Pause();
+                        break;
+
+                    case 3:
+                        var (withdrawSuccess, withdrawMsg) = handler.HandleWithdraw(account);
+                        screen.ShowMessage(withdrawMsg, withdrawSuccess ? ConsoleColor.Green : ConsoleColor.Red);
+                        Pause();
+                        break;
+
+                    case 4:
+                        screen.ShowMessage(handler.HandleExit(), ConsoleColor.Yellow);
+                        screen.ShowLoading(5);
+                        return;
+                }
+            }
+        }
+
+        private Account? AuthenticateUser(AppScreen screen, UserLoginService loginService)
+        {
+            while (true)
             {
                 string cardNumber = ValidatorService.ReadCardNumber();
                 screen.ShowLoading(5);
-                var found = loginService.FindAccount(cardNumber);
 
+                var found = loginService.FindAccount(cardNumber);
                 if (found == null)
                 {
                     screen.ShowMessage("Card not found. Try again.", ConsoleColor.Red);
@@ -49,76 +85,56 @@ namespace ATMApp.App
                 if (found.Status == AccountStatus.Locked)
                 {
                     screen.ShowMessage("Your account has been temporarily locked for suspicious activity. Please call us at 111-000-111 to vertify your identity.", ConsoleColor.Yellow);
-                    return;
+                    return null;
                 }
 
                 string pin = ValidatorService.ReadPin();
                 screen.ShowLoading(5);
 
-                account = loginService.Authenticate(found, pin, out string message);
+                var account = loginService.Authenticate(found, pin, out string message);
                 screen.ShowMessage(message, account != null ? ConsoleColor.Green : ConsoleColor.Red);
 
                 if (account == null && message.Contains("locked"))
-                    return;
+                    return null;
+
+                if (account != null)
+                    return account;
             }
+        }
 
-            int choice;
-
-            do
+        private void HandleSettingsMenu(MenuHandler handler, AppScreen screen, Account account)
+        {
+            bool back = false;
+            while (!back)
             {
-                screen.ShowMainMenu(account);
-                choice = handler.ReadMenuChoice(4);
+                screen.ShowSettingsMenu(account);
+                int settingChoice = handler.ReadMenuChoice(3, () => screen.ShowSettingsMenu(account));
 
-                switch (choice)
+                switch (settingChoice)
                 {
                     case 1:
-                        bool back = false;
-                        while (!back)
-                        {
-                            screen.ShowSettingsMenu(account);
-                            int settingChoice = handler.ReadMenuChoice(3);
-                            string resultMessage = "";
-
-                            switch (settingChoice)
-                            {
-                                case 1: resultMessage = handler.HandleChangeFullname(account); break;
-                                case 2: resultMessage = handler.HandleChangePin(account); break;
-                                case 3: back = true; break;
-                            }
-
-                            screen.ShowLoading(5);
-
-                            if (!string.IsNullOrWhiteSpace(resultMessage))
-                            {
-                                screen.ShowMessage(resultMessage, ConsoleColor.Green);
-                                Console.WriteLine("Press [Enter] to continue...");
-                                Console.ReadLine();
-                            }
-                        }
+                        var (success, message) = handler.HandleChangeFullname(account);
+                        screen.ShowMessage(message, success ? ConsoleColor.Green : ConsoleColor.Red);
                         break;
 
                     case 2:
-                        string depositMsg = handler.HandleDeposit(account);
-                        screen.ShowMessage(depositMsg, depositMsg.Contains("successful") ? ConsoleColor.Green : ConsoleColor.Red);
-                        Console.WriteLine("Press [Enter] to continue...");
-                        Console.ReadLine();
+                        var (pinSuccess, pinMsg) = handler.HandleChangePin(account);
+                        screen.ShowMessage(pinMsg, pinSuccess ? ConsoleColor.Green : ConsoleColor.Red);
                         break;
 
                     case 3:
-                        string withdrawMsg = handler.HandleWithdraw(account);
-                        screen.ShowMessage(withdrawMsg, withdrawMsg.Contains("successful") ? ConsoleColor.Green : ConsoleColor.Red);
-                        Console.WriteLine("Press [Enter] to continue...");
-                        Console.ReadLine();
-                        break;
-
-                    case 4:
-                        string exitMsg = handler.HandleExit();
-                        screen.ShowMessage(exitMsg, ConsoleColor.Yellow);
-                        screen.ShowLoading(5);
-                        return;
+                        back = true;
+                        continue;
                 }
+
+                Pause();
             }
-            while (true);
+        }
+
+        private void Pause()
+        {
+            Console.WriteLine("Press [Enter] to continue...");
+            Console.ReadLine();
         }
     }
 }
