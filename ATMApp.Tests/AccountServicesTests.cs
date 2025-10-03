@@ -8,7 +8,7 @@ public class AccountServicesTests
 {
     private Account CreateTestAccount()
     {
-        var account = new Account(id: 1, cardNumber: "1234567890", cardPin: Security.HashPin("123456"), accountNumber: "12345678", fullName: "Test User", balance: 1000m);
+        var account = new Account(id: 1, cardNumber: "1234567890", cardPin: Security.HashPin("123456"), accountNumber: "12345678", fullName: "Test User", accountBalance: 1000m);
 
         return account;
     }
